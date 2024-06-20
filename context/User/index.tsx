@@ -42,30 +42,6 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [])
 
-    useEffect(() => {
-        if (user) {
-
-            const addResources = setInterval(() => {
-                if (user) {
-                    localStorage.setItem
-
-                    setUser(() => {
-                        const changeUser = {
-                            ...user,
-                        food_balance: user.food_balance++
-                        }
-                        localStorage.setItem("user", JSON.stringify(changeUser))
-                        return changeUser
-                    })
-                }
-            }, 10000)
-            return () => {
-                clearInterval(addResources);
-            };
-        }
-
-    }, [buildings, user])
-
     return (
         <UserContext.Provider value={{ user, setUser }}>
             {children}

@@ -79,7 +79,6 @@ export const ActionMoveVillagers = ({ building }: { building: BUILDING }) => {
                                     name="amountVillager"
                                     type="number"
                                     className="w-1/2 text-end"
-                                    defaultValue={0}
                                     max={building?.attributes?.find(([attr, value]) => attr === "villager")?.[1]}
                                     value={amountVillagerMove.toString()}
                                     onChange={(e) => {

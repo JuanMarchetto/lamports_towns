@@ -2,31 +2,109 @@
 
 import Image from "next/image"
 import { PopUp } from "../PopUp"
-import { useState } from "react"
+import { Key, useEffect, useState } from "react"
 import { ActionsHouse } from "./ActionsToBuilding/house"
 import { ActionsFactory } from "./ActionsToBuilding/factory"
 import { ActionsArmery } from "./ActionsToBuilding/armery"
-import { useProduction } from "@/actions/Production"
+import { getResources, useProduction } from "@/actions/Resources"
+import { useBuildings } from "@/context/Buildings"
+import { useUser } from "@/context/User"
 
 export const Building = ({ building }: { building: BUILDING }) => {
+    const { user, setUser } = useUser()
+    const { buildings, setBuildings } = useBuildings()
     const [openConfig, setOpenConfig] = useState<boolean>(false)
     const [description, setDescription] = useState<boolean>(false)
+    const production = useProduction(building.pubkey)
 
-    useProduction(building, 200)
-    
+    useEffect(() => {
+
+        if (production) {
+            setBuildings(() => {
+                return buildings.map((bldg) => {
+                    if (bldg.pubkey === production.pubkey) {
+                        return production
+                    }
+                    return bldg
+                })
+            })
+        }
+    }, [production])
+
     const Actions = {
         house: <ActionsHouse building={building} />,
         factory: <ActionsFactory building={building} />,
         armery: <ActionsArmery building={building} />
     }
 
+    const resourcesToBuilding = {
+        factory: {
+            image: <Image
+                alt="mineral"
+                width={40}
+                height={40}
+                src="/mineral.png"
+            />,
+            resource: "mineral_balance"
+        }
+        ,
+        farm: {
+            image: <Image
+                alt="food"
+                className="drop-shadow-md"
+                width={40}
+                height={40}
+                src="/food.png"
+            />,
+            resource: "food_balance"
+        }
+    }
+
+    const handlerGetResources = () => {
+        console.log("excecute?")
+        const resources = getResources(building.pubkey)
+        if (resources && user) {
+            const { amountResourcesObtained, emptyBuilding } = resources
+
+            const resource = resourcesToBuilding[building.type as keyof typeof resourcesToBuilding].resource
+
+            setUser({
+                ...user,
+                [resource]: Number(user?.[resource as keyof typeof user]) + amountResourcesObtained
+            })
+
+            setBuildings(buildings.map((bldg) => {
+                if (bldg.pubkey === building.pubkey) {
+                    return emptyBuilding
+                }
+                return bldg
+            }))
+
+        }
+    }
+    
+    const canGetResources = resourcesToBuilding?.[building.type as keyof typeof resourcesToBuilding]?.resource &&
+    Number(building.attributes.find(attr=> attr[0] === resourcesToBuilding?.[building.type as keyof typeof resourcesToBuilding]?.resource)?.[1])
+
     return (
         <>
             <div
-                className=" w-28 h-28 p-1 "
+                className="relative w-28 h-28 p-1 "
                 onClick={() => { setOpenConfig(true) }}
 
             >
+                {
+                    !!canGetResources &&
+                    <button
+                        className="absolute top-1 right-1"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handlerGetResources()
+                        }}
+                    >
+                        {resourcesToBuilding?.[building.type as keyof typeof resourcesToBuilding]?.image}
+                    </button>
+                }
                 <Image
                     alt=""
                     src={building.img_url}
