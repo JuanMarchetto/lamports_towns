@@ -111,7 +111,7 @@ export const useProduction = (buildingPubKey: string,) => {
 
 
             }
-        }, 5000)
+        }, 10000)
         return () => clearInterval(runProduction)
     }, [building])
     return building
