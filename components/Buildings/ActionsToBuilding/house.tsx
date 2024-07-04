@@ -1,6 +1,3 @@
-import { levelUp } from "@/actions/LevelUp"
-import { createVillager, moveVillagers } from "@/actions/Villagers"
-import { Key, useEffect, useState } from "react"
 import { ActionLevelUp } from "./actions/levelUp"
 import { ActionCreateVillager } from "./actions/createVillager"
 import { ActionMoveVillagers } from "./actions/moveVillagers"

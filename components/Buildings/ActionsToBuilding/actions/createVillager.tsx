@@ -10,7 +10,7 @@ export const ActionCreateVillager = ({ building }: { building: BUILDING }) => {
         <button
             className="btn"
             onClick={() => {
-                const newVillager = createVillager(building.pubkey)
+                const newVillager = createVillager(building.pubkey, building.city)
                 if(newVillager) {
                     setBuildings(() => {
                         return buildings.map(bldg => {

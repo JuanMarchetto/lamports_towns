@@ -1,13 +1,9 @@
 import { typesBuildings } from "@/constants"
 import { useBuildings } from "@/context/Buildings"
-import { useCity } from "@/context/City"
-import { useUser } from "@/context/User"
 import Image from "next/image"
 import { Key, useState } from "react"
 
-export const SelectBuilding = () => {
-    const { user, setUser } = useUser()
-    const { city } = useCity()
+export const SelectBuilding = ({city, x, y}: {city: string, x: number, y: number}) => {
     const [confirmation, setConfirmation] = useState<boolean>(false)
     const [selectBuilding, setSelectBuilding] = useState<string>("")
     const {createBuilding} = useBuildings()
@@ -54,10 +50,8 @@ export const SelectBuilding = () => {
                         <button
                             className=" bg-green-500 rounded-md p-2"
                             onClick={()=>{
-                                createBuilding(user, city, selectBuilding)
+                                createBuilding(city, selectBuilding, x, y)
                                 setConfirmation(false)
-                                const getUser = localStorage.getItem("user")
-                                getUser && setUser(JSON.parse(getUser))
                             }}
                         >
                             Confirm

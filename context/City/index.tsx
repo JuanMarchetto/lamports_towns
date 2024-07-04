@@ -1,54 +1,57 @@
 "use client"
 
-import React, { ReactNode, useContext, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import React, { MouseEventHandler, ReactNode, useContext, useEffect } from "react"
 import { createContext, useState } from "react"
+import { useMap } from "../Map"
+import { City } from "@/components/City"
 
 interface CityI {
-    city: CITY
+    cities: CITY[],
+    handlerCities: Function
 }
 
 const CityContext = createContext<CityI>({
-    city: {
-        pubkey: "wqewe", // generarlas aleatoriamente por ahora
-        name: "",
-        img_url: "/city.png",
-        authority: "", // the pubkey of the owner of the city
-    }
+    cities: [],
+    handlerCities: () => { }
 })
 
 const CityProvider = ({ children }: { children: ReactNode }) => {
-    const [city, setCity] = useState<CITY>({
-        pubkey: "", // generarlas aleatoriamente por ahora
-        name: "",
-        img_url: "/city.png",
-        authority: "", // the pubkey of the owner of the city
-    })
+    const [cities, setCities] = useState<CITY[]>([])
 
     useEffect(() => {
-        const localCity = localStorage.getItem("city")
-        if (!localCity) {
-            const pubkey = Math.random().toString()
-            const city = {
-                pubkey: pubkey, // generarlas aleatoriamente por ahora
-                name: "",
-                img_url: "/city.png",
-                authority: "", // the pubkey of the owner of the city
-            }
-            localStorage.setItem("city", 
-                JSON.stringify(city)
-            )
-            setCity(city)
+        // fetch map with pubkey cities 
+        const localCity = localStorage.getItem("cities")
+        if (localCity) {
+            setCities(JSON.parse(localCity))
         }
+        const handleStorageChange = () => {
+            const localBuildings = localStorage.getItem("cities")
+            if (localBuildings) setCities(JSON.parse(localBuildings))
+
+        };
+        window.addEventListener('changeCity', handleStorageChange);
+
+        return () => window.removeEventListener('changeCity', handleStorageChange);
     }, [])
 
+    const handlerCities = () => {
+        // fetch map with pubkey cities 
+        const localCity = localStorage.getItem("cities")
+        if (localCity) {
+            setCities(JSON.parse(localCity))
+        }
+
+    }
+
     return (
-        <CityContext.Provider value={{ city }}>
+        <CityContext.Provider value={{ cities, handlerCities }}>
             {children}
         </CityContext.Provider>
     )
 
 }
 
-const useCity = () => useContext(CityContext)
+const useCities = () => useContext(CityContext)
 
-export { CityProvider, useCity }
+export { CityProvider, useCities }

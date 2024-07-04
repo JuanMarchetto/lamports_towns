@@ -1,10 +1,8 @@
 import { levelUp } from "@/actions/LevelUp"
 import { useBuildings } from "@/context/Buildings"
-import { useCities } from "@/context/City"
-import { useUser } from "@/context/User"
 
 
-export const ActionLevelUp = ({ building }: { building: BUILDING }) => {
+export const ActionsAttack = ({ building }: { building: BUILDING }) => {
     const { setBuildings } = useBuildings()
 
 

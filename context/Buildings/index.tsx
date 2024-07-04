@@ -3,6 +3,9 @@
 import { build } from "@/actions/Build"
 import React, { Dispatch, ReactNode, SetStateAction, useContext, useEffect } from "react"
 import { createContext, useState } from "react"
+import { useUser } from "../User"
+import { addBuildToMap } from "@/actions/Map"
+import { useMap } from "../Map"
 
 interface BuildgingsContext {
     buildings: BUILDING[],
@@ -17,52 +20,40 @@ const BuildgingsContext = createContext<BuildgingsContext>({
 })
 
 const BuildingsProvider = ({ children }: { children: ReactNode }) => {
+    //const {user} = useUser()
     const [buildings, setBuildings] = useState<BUILDING[]>([])
-
-    // useEffect(()=>{
-    //     const chainBuilding = fetch()
-    //     setBuildings(chainBuilding)
-    // },[])
+    const { setMap } = useMap()
 
     useEffect(() => {
-        const buildings = localStorage.getItem("buildings")
-        if (!buildings) {
-            localStorage.setItem("buildings", JSON.stringify([
-                {
-                    pubkey: Math.random().toString(), // generarlas aleatoriamente por ahora
-                    type: "house",
-                    description: "description",
-                    img_url: `/house.png`,
-                    attributes: [["villager", "1"], ["level", "1"], ["power", "200"], ["defense", "20"], ["color", "red"]],
-                    city: "", // the pubkey of the city assigned (NULL if unassigned)
-                    authority: "", // the pubkey of the owner of the building
-                }
-            ]))
-            setBuildings([{
-                pubkey: Math.random().toString(), // generarlas aleatoriamente por ahora
-                type: "house",
-                description: "description",
-                img_url: `/house.png`,
-                attributes: [["villager", "1"], ["level", "1"], ["power", "200"], ["defense", "20"], ["color", "red"]],
-                city: "", // the pubkey of the city assigned (NULL if unassigned)
-                authority: "", // the pubkey of the owner of the building
-            }])
-        } else {
-            setBuildings(JSON.parse(buildings))
-
+        const localBuildings = localStorage.getItem("buildings") //fetch with pubkey city
+        if (localBuildings) {
+            const buildings: BUILDING[] = JSON.parse(localBuildings)
+            setBuildings(buildings)
         }
+
     }, [])
 
 
 
-    const createBuilding = (user: USER, city: CITY, selectBuilding: String) => {
+    const createBuilding = (city: string, selectBuilding: string, x: string, y: string) => {
 
-        const newBuilding = build(user.pubkey, city.pubkey, selectBuilding)
+        const newBuilding = build(city, selectBuilding, x, y)
+        if (newBuilding) {
 
-        newBuilding && setBuildings([
-            ...buildings,
-            newBuilding
-        ])
+            const newMap = addBuildToMap(city, newBuilding?.pubkey, Number(x), Number(y))
+            if (newMap) {
+                setMap((prevMap) => {
+                    return {
+                        ...prevMap,
+                        cells: newMap
+                    }
+                })
+            }
+            setBuildings([
+                ...buildings,
+                newBuilding
+            ])
+        }
     }
 
 

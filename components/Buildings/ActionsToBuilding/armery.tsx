@@ -1,9 +1,7 @@
-import { levelUp } from "@/actions/LevelUp"
-import { createVillager, moveVillagers } from "@/actions/Villagers"
-import { Key, useEffect, useState } from "react"
 import { ActionLevelUp } from "./actions/levelUp"
 import { ActionMoveVillagers } from "./actions/moveVillagers"
 import { ActionCreateSoldier } from "./actions/createSoldier"
+import { ActionsAttack } from "./actions/attack"
 
 export const ActionsArmery = ({ building }: { building: BUILDING }) => {
 
@@ -14,6 +12,7 @@ export const ActionsArmery = ({ building }: { building: BUILDING }) => {
             <ActionLevelUp building={building} />
             <ActionMoveVillagers building={building} />
             <ActionCreateSoldier building={building} />
+            <ActionsAttack building={building} />
         </div>
 
     )

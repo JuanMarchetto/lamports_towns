@@ -1,20 +1,25 @@
 
 
-export const createVillager = (buildingPubkey: String) => {
-    const localUser = localStorage.getItem("user")
+export const createVillager = (buildingPubkey: string, cityPubkey: string) => {
+    const localCities = localStorage.getItem("cities")
     const localBuildings = localStorage.getItem("buildings")
 
-    if (localUser && localBuildings) {
-        const user: USER = JSON.parse(localUser)
+    if (localCities && localBuildings) {
+        const cities: CITY[] = JSON.parse(localCities)
         const buildings: BUILDING[] = JSON.parse(localBuildings)
 
-        if (user.food_balance > 0) {
-            const changeUser = {
-                ...user,
-                food_balance: Math.floor(user.food_balance - 1)
+        const city = cities.find(ct => ct.pubkey === cityPubkey)
+
+        if (city && city.food_balance > 0) {
+            const changeCity = {
+                ...city,
+                food_balance: Math.floor(city.food_balance - 1)
             }
             localStorage.setItem("user",
-                JSON.stringify(changeUser)
+                JSON.stringify([
+                    ...cities,
+                    changeCity
+                ])
             )
 
             const findBuilding = buildings.find((building) => building.pubkey === buildingPubkey)
@@ -59,7 +64,7 @@ export const moveVillagers = (fromBuildingPubkey: String, toBuildingPubkey: Stri
 
         if (findFromBuilding && findToBuilding) {
 
-            const fromBuilding = {
+            const fromBuilding: BUILDING = {
                 ...findFromBuilding,
                 attributes: findFromBuilding?.attributes.map(([attr, value]) => {
                     if (attr === "villager") {
@@ -70,7 +75,7 @@ export const moveVillagers = (fromBuildingPubkey: String, toBuildingPubkey: Stri
 
             }
 
-            const toBuilding = {
+            const toBuilding: BUILDING = {
                 ...findToBuilding,
                 attributes: (!findToBuilding?.attributes.find(([attr])=> attr === "villager") ?
                     [

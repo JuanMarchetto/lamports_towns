@@ -1,18 +1,24 @@
-export const createSoldier = (buildingPubkey: String, amountSoldiersCreate: number) => {
-    const localUser = localStorage.getItem("user")
+export const createSoldier = (cityPubkey: string, buildingPubkey: string, amountSoldiersCreate: number) => {
+    const localCities = localStorage.getItem("cities")
     const localBuildings = localStorage.getItem("buildings")
 
-    if (localUser && localBuildings) {
-        const user: USER = JSON.parse(localUser)
+    if (localCities && localBuildings) {
+        const cities: CITY[] = JSON.parse(localCities)
         const buildings: BUILDING[] = JSON.parse(localBuildings)
 
-        if (user.food_balance > 0) {
-            const changeUser = {
-                ...user,
-                mineral_balance: Math.floor(user.mineral_balance - amountSoldiersCreate * 10)
-            }
-            localStorage.setItem("user",
-                JSON.stringify(changeUser)
+        const city = cities.find(ct => ct.pubkey === cityPubkey)
+
+        if (city && city.food_balance > 0) {
+            localStorage.setItem("cities",
+                JSON.stringify(cities.map(city => {
+                    if (city.pubkey === cityPubkey) {
+                        return {
+                            ...city,
+                            mineral_balance: Math.floor(city.mineral_balance - 5)
+                        }
+                    }
+                    return city
+                }))
             )
 
             const oldBuilding = buildings.find((building) => building.pubkey === buildingPubkey)
@@ -24,7 +30,7 @@ export const createSoldier = (buildingPubkey: String, amountSoldiersCreate: numb
                             return [attr, (Number(value) - amountSoldiersCreate).toString()]
                         } else if (attr === "soldier") {
                             return [attr, (Number(value) + amountSoldiersCreate).toString()]
-                            
+
                         }
                         return ([attr, value])
                     })

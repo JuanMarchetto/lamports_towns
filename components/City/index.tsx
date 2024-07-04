@@ -3,17 +3,19 @@
 import Image from "next/image"
 import { useState } from "react"
 import { PopUp } from "../PopUp"
-import { useCity } from "@/context/City"
 
-export const City = () => {
-    const {city} = useCity()
+export const City = ({city}: {city: CITY}) => {
     const [popUp, setPopup] = useState<boolean>(false)
 
 
     return (
         <>
             <div
-                className=" w-28 p-1"
+                className=" w-20 h-20 p-1 shadow-md"
+                style={{
+                    gridColumn: Number(city.attributes.find(([attr]) => attr === 'x')?.[1]) + 1,
+                    gridRow: Number(city.attributes.find(([attr]) => attr === 'y')?.[1]) + 1
+                }}
             >
                 <Image
                     alt=""

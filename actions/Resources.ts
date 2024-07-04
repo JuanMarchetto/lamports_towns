@@ -1,3 +1,5 @@
+import { useBuildings } from "@/context/Buildings"
+import { useCities } from "@/context/City"
 import { useEffect, useState } from "react"
 
 export const getResources = (buildingPubKey: string) => {
@@ -18,13 +20,9 @@ export const getResources = (buildingPubKey: string) => {
             const resource = resourcesToBuilding[findBuilding.type as keyof typeof resourcesToBuilding]
 
             const amountResourcesObtained = Number(findBuilding.attributes.find((attr) => attr[0] === resource)?.[1])
-
-            console.log(resource)
-
             const emptyBuilding = {
                 ...findBuilding,
-                attributes: findBuilding.attributes.map((attr) => {
-                    console.log(attr[0] === resource, attr[0], resource)
+                attributes: findBuilding.attributes.map((attr): [string, string] => {
                     if (attr[0] === resource) {
                         return [attr[0], "0"]
                     }
@@ -58,15 +56,15 @@ export const getResources = (buildingPubKey: string) => {
 
 }
 
-export const useProduction = (buildingPubKey: string,) => {
-    const [building, setBuilding] = useState<BUILDING>()
+export const useProduction = () => {
+    const [building, setBuilding] = useState<BUILDING[]>()
 
     useEffect(() => {
         const runProduction = setInterval(() => {
             const localBuildings = localStorage.getItem("buildings")
             if (localBuildings) {
                 const buildings: BUILDING[] = JSON.parse(localBuildings)
-                const findBuilding = buildings.find(bldg => bldg.pubkey === buildingPubKey)
+
                 const resourcesToBuilding = {
                     factory: {
                         resources: "mineral_balance",
@@ -79,35 +77,47 @@ export const useProduction = (buildingPubKey: string,) => {
                 }
 
 
-                if (findBuilding) {
-                    const resource = resourcesToBuilding[findBuilding.type as keyof typeof resourcesToBuilding]
-                    const findAmountWorkers = findBuilding.attributes.find(([attr]) => attr === "villager")
+                const production = buildings.reduce((acc, bldg) => {
+                    const resource = resourcesToBuilding[bldg.type as keyof typeof resourcesToBuilding]
+                    const findAmountWorkers = bldg.attributes.find(([attr]) => attr === "villager")
+
 
                     if (findAmountWorkers && resource) {
 
                         const amountWorkers = Number(findAmountWorkers[1])
 
-                        const produceResource = {
-                            ...findBuilding,
-                            attributes: findBuilding.attributes.map((attr) => {
+                        const produceResource: BUILDING = {
+                            ...bldg,
+                            attributes: bldg.attributes.map((attr) => {
                                 if (attr[0] === resource.resources && Number(attr[1]) < resource.limit) {
                                     return [attr[0], ((amountWorkers / 2) + Number(attr[1])).toString()]
                                 }
                                 return attr
                             })
                         }
-                        setBuilding(produceResource)
 
-                        localStorage.setItem("buildings", JSON.stringify(
-                            buildings.map((bldg) => {
-                                if (bldg.pubkey === buildingPubKey) {
-                                    return produceResource
-                                }
-                                return bldg
-                            })
-                        ))
+
+                        return [
+                            ...acc,
+                            produceResource
+                        ]
                     }
-                }
+                    return acc
+                }, [] as BUILDING[])
+
+                setBuilding(production)
+
+                localStorage.setItem("buildings", JSON.stringify(
+                    buildings.map((bldg) => {
+                        const addResources = production.find(findBldg => findBldg.pubkey === bldg.pubkey)
+                        if (addResources) {
+                            return addResources
+                        }
+                        return bldg
+                    })
+                ))
+
+
 
 
             }
@@ -115,4 +125,14 @@ export const useProduction = (buildingPubKey: string,) => {
         return () => clearInterval(runProduction)
     }, [building])
     return building
+}
+
+export const useConsume = () => {
+    // const { cities,  } = useCities()
+    // const { buildings } = useBuildings
+
+    // useEffect(()=>{
+    // buildings
+    // },[])
+
 }

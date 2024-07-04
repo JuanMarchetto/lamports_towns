@@ -18,21 +18,17 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     const { buildings } = useBuildings()
 
     useEffect(() => {
-        const user = localStorage.getItem("user")
+        const user = localStorage.getItem("user") // 
         if (!user) {
             localStorage.setItem("user", JSON.stringify({
                 pubkey: "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed", // generarlas aleatoriamente por ahora
                 sol_balance: 0,
-                food_balance: 100,
-                mineral_balance: 100,
                 usdc_balance: 0,
                 bonk_balance: 0,
             }))
             setUser({
                 pubkey: "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed", // generarlas aleatoriamente por ahora
                 sol_balance: 0,
-                food_balance: 100,
-                mineral_balance: 100,
                 usdc_balance: 0,
                 bonk_balance: 0,
             })

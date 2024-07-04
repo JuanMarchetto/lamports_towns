@@ -15,21 +15,6 @@ export const Building = ({ building }: { building: BUILDING }) => {
     const { buildings, setBuildings } = useBuildings()
     const [openConfig, setOpenConfig] = useState<boolean>(false)
     const [description, setDescription] = useState<boolean>(false)
-    const production = useProduction(building.pubkey)
-
-    useEffect(() => {
-
-        if (production) {
-            setBuildings(() => {
-                return buildings.map((bldg) => {
-                    if (bldg.pubkey === production.pubkey) {
-                        return production
-                    }
-                    return bldg
-                })
-            })
-        }
-    }, [production])
 
     const Actions = {
         house: <ActionsHouse building={building} />,
@@ -61,7 +46,6 @@ export const Building = ({ building }: { building: BUILDING }) => {
     }
 
     const handlerGetResources = () => {
-        console.log("excecute?")
         const resources = getResources(building.pubkey)
         if (resources && user) {
             const { amountResourcesObtained, emptyBuilding } = resources
@@ -82,16 +66,19 @@ export const Building = ({ building }: { building: BUILDING }) => {
 
         }
     }
-    
+
     const canGetResources = resourcesToBuilding?.[building.type as keyof typeof resourcesToBuilding]?.resource &&
-    Number(building.attributes.find(attr=> attr[0] === resourcesToBuilding?.[building.type as keyof typeof resourcesToBuilding]?.resource)?.[1])
+        Number(building.attributes.find(attr => attr[0] === resourcesToBuilding?.[building.type as keyof typeof resourcesToBuilding]?.resource)?.[1])
 
     return (
         <>
             <div
-                className="relative w-28 h-28 p-1 "
+                className="relative h-20 w-20 p-1 "
                 onClick={() => { setOpenConfig(true) }}
-
+                style={{
+                    gridColumn: Number(building.attributes.find(([attr]) => attr === 'x')?.[1]) + 1,
+                    gridRow: Number(building.attributes.find(([attr]) => attr === 'y')?.[1]) + 1
+                }}
             >
                 {
                     !!canGetResources &&

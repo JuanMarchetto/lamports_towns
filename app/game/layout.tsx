@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { Header } from "@/components/Header";
 import { BuildingsProvider } from "@/context/Buildings";
 import { UserProvider } from "@/context/User";
@@ -20,22 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} w-screen h-screen`}>
-        <UserProvider>
-          <MapsProvider>
-            <CityProvider>
-              <BuildingsProvider>
-                <div
-                  className="w-full h-[calc(100vh_-_4rem)]"
-                >
-                  {children}
-                </div>
-              </BuildingsProvider>
-            </CityProvider>
-          </MapsProvider>
-        </UserProvider>
-      </body>
-    </html>
+    <>
+      <Header />
+      <div
+        className="w-full h-[calc(100vh_-_4rem)]"
+      >
+        {children}
+      </div>
+    </>
+
   );
 }

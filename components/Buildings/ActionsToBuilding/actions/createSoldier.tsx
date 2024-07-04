@@ -1,8 +1,7 @@
-import { Key, useState } from "react"
+import { useState } from "react"
 
-import { moveVillagers } from "@/actions/Villagers"
 import { useBuildings } from "@/context/Buildings"
-import { createSoldier } from "@/actions/CreateSoldier"
+import { createSoldier } from "@/actions/Military"
 
 
 export const ActionCreateSoldier = ({ building }: { building: BUILDING }) => {

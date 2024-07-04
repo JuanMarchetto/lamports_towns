@@ -2,12 +2,28 @@
 
 import { useBuildings } from "@/context/Buildings"
 import { Building } from "../Buildings"
-import { Key } from "react"
+import { Key, useEffect } from "react"
+import { useProduction } from "@/actions/Resources"
 
 
 export const ListBuildings = () => {
-    const { buildings } = useBuildings()
+    const { buildings, setBuildings } = useBuildings()
+    const production = useProduction()
 
+    useEffect(() => {
+
+        if (production) {
+            setBuildings(() => {
+                return buildings.map((bldg) => {
+                    const addResources = production.find(findBldg => findBldg.pubkey === bldg.pubkey)
+                    if (addResources) {
+                        return addResources
+                    }
+                    return bldg
+                })
+            })
+        }
+    }, [production])
 
     return (
         <>
