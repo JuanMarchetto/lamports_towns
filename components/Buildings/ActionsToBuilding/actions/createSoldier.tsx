@@ -69,7 +69,7 @@ export const ActionCreateSoldier = ({ building }: { building: BUILDING }) => {
                                     disabled={!amountCreateSoldier}
                                     className={` bg-[#37d137] p-1 rounded-sm ${(!amountCreateSoldier) && "bg-gray-300"}`}
                                     onClick={() => {
-                                        const resCreateSoldier = createSoldier(building.pubkey, amountCreateSoldier)
+                                        const resCreateSoldier = createSoldier(building.city, building.pubkey, amountCreateSoldier)
                                         if (resCreateSoldier) {
                                             setBuildings((prevState) => {
                                                 return prevState.map((bldg) => {

@@ -24,10 +24,10 @@ export const ActionMoveVillagers = ({ building }: { building: BUILDING }) => {
                     className="fixed z-30 w-full h-full top-0 left-0 backdrop-blur flex justify-center pt-10"
                 >
                     <div
-                        className="relative w-10/12 h-min rounded-md bg-amber-700 p-4"
+                        className="relative w-10/12 h-min p-4"
                     >
                         <div
-                            className="flex flex-col shadow-md active:shadow-none items-center rounded-sm bg-gray-400 gap-2 text-black w-full p-2 py-1"
+                            className="flex flex-col items-center shadow-md rounded-sm gap-2 bg-amber-800 text-black w-full p-4 "
                         >
                             <div
                                 className="flex justify-between w-full"
@@ -42,7 +42,7 @@ export const ActionMoveVillagers = ({ building }: { building: BUILDING }) => {
                                 <select
                                     className="w-1/2 bg-slate-400"
                                     defaultValue="Select Building"
-                                    onChange={(e) => setToBuildingPubKey(e.target.value)}
+                                     
                                 >
                                     <option
                                         disabled
@@ -90,7 +90,7 @@ export const ActionMoveVillagers = ({ building }: { building: BUILDING }) => {
                             </div>
 
                             <div
-                                className="flex w-1/2 gap-4"
+                                className="flex  gap-4"
                             >
                                 <button
                                     className="btn"

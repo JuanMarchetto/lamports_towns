@@ -50,3 +50,4 @@ export const createSoldier = (cityPubkey: string, buildingPubkey: string, amount
 
     }
 };
+
